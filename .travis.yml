@@ -13,27 +13,29 @@ before_script:
 - sudo apt update -y >/dev/null 2>&1 || true
 - sudo apt install -y --no-install-recommends bash unzip curl jq libxml2-utils docker-ce python-pip >/dev/null 2>&1
 - sudo pip install docker-compose httpie >/dev/null 2>&1
-- source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
-- stop_any 8080 80
+#
+- sudo /etc/init.d/mysql      stop || true
+- sudo /etc/init.d/postgresql stop || true
+- sudo /etc/init.d/mongo      stop || true
+- sudo /etc/init.d/redis      stop || true
+#
+#- source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
+- rm -rf /tmp/i ; curl -Ss https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash > /tmp/i ; source /tmp/i
+- stop_any 8080 8081 8082 8000 80 3306 3306 3306 6379 6379 6379
 
 script:
 - docker-compose build
-- docker-compose up
+- docker-compose up &
 - bash gradlew >/dev/null 2>&1
 - java -jar ./build/libs/*.jar &
 - wait_for 8080
 - http :8080
-- stop_any 8080 80
+- stop_any 8080 8081 8082 8000 80 3306 6379
 #
 - docker-compose build
-- docker-compose up
+- docker-compose up &
 - bash mvnw >/dev/null 2>&1
 - bash ./target/*.jar &
 - wait_for 8080
 - http :8080
-- stop_any 8080 80
-
-cache:
-  directories:
-  - $HOME/.m2
-  - $HOME/.gradle
+- stop_any 8080 8081 8082 8000 80 3306 6379
