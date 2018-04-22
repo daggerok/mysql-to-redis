@@ -1,0 +1,29 @@
+db:
+  mysql:
+    host: ${DB_MYSQL_HOST:0.0.0.0}
+    port: ${DB_MYSQL_PORT:3306}
+    user: ${DB_MYSQL_USER:app-db-user}
+    password: ${DB_MYSQL_PASSWORD:app-db-password}
+    database: ${DB_MYSQL_DATABASE:app-database}
+    url: jdbc:mysql://${db.mysql.host}:${db.mysql.port}/${db.mysql.database}?useSSL=false&verifyServerCertificate=false&requireSSL=false
+  redis:
+    host: ${DB_REDIS_HOST:0.0.0.0}
+    port: ${DB_REDIS_PORT:6379}
+    database: ${DB_REDIS_DATABASE_INDEX:0}
+    password: ${DB_REDIS_DATABASE_PASSWORD:}
+
+spring:
+  datasource:
+    url: ${db.mysql.url}
+    username: ${db.mysql.user}
+    password: ${db.mysql.password}
+  jpa:
+    database-platform: MYSQL
+    hibernate.ddl-auto: validate
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    show-sql: false
+  redis:
+    host: ${db.redis.host}
+    port: ${db.redis.port}
+    database: ${db.redis.database}
+    password: ${db.redis.password}

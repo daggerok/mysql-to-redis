@@ -1,0 +1,58 @@
+version: "2.1"
+
+services:
+
+  mysql:
+    image: healthcheck/mysql
+    ports: ["3306:3306"]
+    environment:
+      MYSQL_USER: app-db-user
+      MYSQL_PASSWORD: app-db-password
+      MYSQL_DATABASE: app-database
+      MYSQL_ROOT_PASSWORD: root-db-password
+    networks: [backing-services]
+    restart: unless-stopped
+    #mem_limit: 786432000 # container limit: 700Mb (700 * 1024 * 1024)
+
+  # https://github.com/phpmyadmin/docker
+  mysql-ui:
+    image: phpmyadmin/phpmyadmin:4.7
+    ports: ["8081:80"]
+    environment:
+      PMA_ARBITRARY: 1
+      TESTSUITE_PASSWORD: Admin.123
+      PMA_VERBOSES: mysql
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_USER: app-db-user
+      MYSQL_PASSWORD: app-db-password
+      MYSQL_DATABASE: app-database
+      MYSQL_ROOT_PASSWORD: root-db-password
+    depends_on: [mysql]
+    links: ["mysql:db"]
+    networks: [backing-services]
+    restart: unless-stopped
+    #mem_limit: 786432000 # container limit: 700Mb (700 * 1024 * 1024)
+
+  redis:
+    image: healthcheck/redis:alpine
+    ports: ["6379:6379"]
+    networks: [backing-services]
+    command: " redis-server --appendonly yes "
+    restart: unless-stopped
+    #mem_limit: 786432000 # container limit: 700Mb (700 * 1024 * 1024)
+
+  redis-ui:
+    image: rediscommander/redis-commander
+    ports: ["8082:8081"]
+    environment:
+      REDIS_HOSTS: docker-redis-server:redis:6379
+    depends_on: [redis]
+    links: ["redis:redis"]
+    networks: [backing-services]
+    restart: unless-stopped
+    #mem_limit: 786432000 # container limit: 700Mb (700 * 1024 * 1024)
+
+networks:
+  backing-services:
+    driver: bridge
