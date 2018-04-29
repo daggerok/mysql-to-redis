@@ -73,7 +73,6 @@ dependencies {
   compileOnly("org.projectlombok:lombok")
   testCompileOnly("org.projectlombok:lombok")
   compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.5")
-  compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
   compile("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 
   testCompile("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
@@ -92,7 +91,6 @@ dependencies {
 dependencyManagement {
   imports {
     mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
-    //mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
   }
 }
 
